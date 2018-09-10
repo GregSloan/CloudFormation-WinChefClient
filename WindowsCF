@@ -1,0 +1,39 @@
+"install_chef" : {
+ "sources" : {
+ "c:\chef" : "https://packages.chef.io/files/stable/chef/14.4.56/windows/2016/chef-client-14.4.56-1-x64.msi"
+ },
+
+ "/var/chef/chef-repo/.chef/knife.rb" : {
+ "content" : { "Fn::Join": [ "", [
+ "cookbook_path [ '/var/chef/chef-repo/cookbooks' ]\n",
+ "node_path [ '/var/chef/chef-repo/nodes' ]\n"
+ ]]},
+ "mode" : "000400",
+ "owner" : "root",
+ "group" : "root"
+ },
+ "/var/chef/chef-repo/.chef/client.rb" : {
+ "content" : { "Fn::Join": [ "", [
+ "cookbook_path [ '/var/chef/chef-repo/cookbooks' ]\n",
+ "node_path [ '/var/chef/chef-repo/nodes' ]\n"
+ ]]},
+ "mode" : "000400",
+ "owner" : "root",
+ "group" : "root"
+ }
+ },
+ "commands" : {
+ "01_make_chef_readable" : {
+ "command" : "chmod +rx /var/chef"
+ },
+ "02_install_chef" : {
+ "command" : "bash /tmp/install.sh",
+ "cwd" : "/var/chef"
+ },
+ "03_create_node_list" : {
+ "command" : "chef-client -z -c /var/chef/chef-repo/.chef/client.rb",
+ "cwd" : "/var/chef/chef-repo",
+ "env" : { "HOME" : "/var/chef" }
+ }
+ }
+ },
